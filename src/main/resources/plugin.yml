@@ -1,0 +1,6 @@
+name: Horoscope
+version: ${project.version}
+main: net.poweredbyawesome.horoscope.Horoscope
+authors: [LaxWasHere]
+commands:
+  horoscope:
