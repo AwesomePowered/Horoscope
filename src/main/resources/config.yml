@@ -1,3 +1,5 @@
 message:
   - '&7> %SIGN%'
   - '&f[&6Horoscope&f] &a%HOROSCOPE%'
+signs:
+  e642db22-25c2-43df-b07b-13ad224aa669: Virgo

@@ -1,11 +1,9 @@
 package net.poweredbyawesome.horoscope;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
@@ -13,43 +11,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
 
-public final class Horoscope extends JavaPlugin {
+public class Horoscope extends JavaPlugin {
 
     public String endpoint = "http://widgets.fabulously40.com/horoscope.json?sign={sign}";
     private JsonParser jp = new JsonParser();
+    public static Horoscope instance;
     String[] horoscopes = {"Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"};
 
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter a sign: ");
-        while (scanner.hasNextLine()) {
-            String sign = scanner.nextLine();
-            if (sign.equalsIgnoreCase("quit")) {
-                break;
-            }
-            System.out.println(new Horoscope().getHorsoscope(sign));
-            System.out.println("Enter a sign: ");
-        }
-    }
-
     public void onEnable() {
+        instance = this;
+        getCommand("horoscope").setExecutor(new CommandHoroscope());
         saveDefaultConfig();
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (sender.hasPermission("horoscope.horoscope") && args.length >=1) {
-            if (!isValidSign(args[0])) {
-                sender.sendMessage(ChatColor.RED + "Invalid Sign");
-            }
-            for (String string : getConfig().getStringList("message")) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string.replace("%HOROSCOPE%", getHorsoscope(args[0])).replace("%PLAYER%", sender.getName()).replace("%SIGN%", args[0])));
-            }
+    public void sendHoroscope(Player p, String sign) {
+        if (!isValidSign(sign)) {
+            p.sendMessage(ChatColor.RED + "Invalid Sign");
         }
-        return false;
+        for (String string : getConfig().getStringList("message")) {
+            p.sendMessage(ChatColor.translateAlternateColorCodes('&', string.replace("%HOROSCOPE%", getHorsoscope(sign)).replace("%PLAYER%", p.getName()).replace("%SIGN%", sign)));
+        }
     }
 
     public String getHorsoscope(String sign) {
